@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    
+    
+    <title>FirstInFirstOut</title>
+</head>
+<body>
+    <center><h2 style="color: aqua;">FirstInFirstOut</h2></center>
+    <br><br>
+<div id="particles-js">
+<div class="cont1" style="opacity: 75%;">
+
+    <div class="box1 isf">
+        <form>
+            <div class="row">
+              <div class="col">
+                <input type="text" class="form-control" id="frames" placeholder="frames=0">
+              </div> 
+              
+              <div class="col">
+                <input type="text" class="form-control" id="stringval" placeholder="string=123456789">
+              </div>
+            </div>
+          </form> <br>
+          <center>
+            <button class="button-29" role="button" onclick="fifo2()" >Generate</button>
+
+         </center>
+    <br>
+   
+    <div id="div" class="table-hover" style="width:20vw;margin:auto;text-align:center"></div>
+
+
+    <br>
+    <center>
+        <h2 id="htwo" ></h2>
+        <div class="grid-container">
+            
+
+            <div class="grid-child purple">
+                
+                <p id="Hits" ></p>
+
+                <p id="faults"></p>
+                <p id="hitr"></p>
+                <p id="missr"></p>
+            </div>
+        
+            <div class="grid-child green">
+                
+                <p id="Hitsa" ></p>
+
+                <p id="faultsa"></p>
+                <p id="hitra"></p>
+                <p id="missra"></p>
+            </div>
+          
+        </div>
+    </center>
+
+
+    </div>
+
+</div>
+</div>
+  
+
+
+
+<script>
+	var count = 0;
+		var pages = [];
+		var pf;
+		var ph;
+		var Frames;
+		var stringval;
+		var txt;
+	
+		function fifo2() {
+          
+			Frames = document.getElementById("frames").value;
+			stringval = document.getElementById("stringval").value;
+			var isnum = /^\d+$/.test(stringval);
+			if (Frames <= 0) {
+				alert("IInvalid input! kindly try something else");
+				return;
+			} else if (!isnum) {
+				alert("Invalid input! kindly try something else");
+				return;
+			}
+			
+			console.log(Frames);
+			console.log(stringval);
+			var prev;
+			pf = 0;
+			ph = 0;
+			var k = 0;
+			var i, row = Number(Frames) + 1,
+				j, col = stringval.length;
+	
+			pages = new Array(row);
+			for (i = 0; i < row; i++)
+				pages[i] = new Array(col);
+	
+			for (i = 0; i < row - 1; i++) {
+				for (j = 0; j < col; j++)
+					pages[i][j] = "x";
+			}
+	
+			for (j = 0; j < col; j++) {
+				var smallest = -1;
+				var flag = false;
+				if (j > 0) {
+					for (i = 0; i < row - 1; i++)
+						pages[i][j] = pages[i][j - 1];
+				}
+				for (i = 0; i < row - 1; i++) {
+					if (stringval[k] == pages[i][j])
+						flag = true;
+				}
+				if (flag == false) {
+					for (i = 0; i < row - 1; i++) {
+						if (pages[i][j] == "x") {
+							smallest = i;
+							break;
+						}
+					}
+					if (smallest != -1) {
+						pages[smallest][j] = stringval[k];
+						prev = (smallest + 1) % (row - 1);
+					} else {
+						pages[prev][j] = stringval[k];
+						prev = (prev + 1) % (row - 1);
+					}
+					pages[row - 1][j] = "PF";
+					k++;
+					pf++;
+					console.log("pf=", pf);
+				} else {
+					ph++;
+					k++;
+					console.log("ph=", ph);
+					pages[row - 1][j] = "PH";
+				}
+			}
+			txt = " ";
+			var real;
+			var m = 0;
+			var $table = $("<table border='6'></table>");
+			$table.addClass('table');
+			$tbody = $("<tbody></tbody>");
+			for (i = 0; i < row; i++) {
+	
+				var line = $("<tr></tr>");
+				for (j = 0; j < col; j++) {
+	
+					if (i == row - 1) {
+					
+						$tbody.prepend(line);
+	
+					} else {
+						line.append($("<td></td>").html(pages[i][j] + ""));
+						$tbody.prepend(line);
+					}
+	
+				}
+				$table.append($tbody);
+				$table.appendTo($("#div"));
+				
+	
+				console.log(m);
+			
+				txt = txt + "\n";
+				console.log(txt);
+				console.log(txt.length);
+
+
+                let hitRatio = ph / (ph + pf);
+                let missRatio = pf / (ph + pf);
+
+                document.getElementById("Hits").innerHTML = "Hits: ";
+
+                document.getElementById("faults").innerHTML = "Faults: ";
+                document.getElementById("hitr").innerHTML = "Hit Ratio: ";
+                document.getElementById("missr").innerHTML = "Miss Ratio: ";
+                
+                document.getElementById("htwo").innerHTML = "Details";
+                document.getElementById("Hitsa").innerHTML =  ph;
+
+                document.getElementById("faultsa").innerHTML =  pf;
+                document.getElementById("hitra").innerHTML =  hitRatio;
+                document.getElementById("missra").innerHTML =  missRatio;
+                
+
+
+
+                 }
+}
+
+
+
+</script>
+
+
+<script src="particles.js"></script>
+<script src="app.js"></script>
+    
+</body>
+</html>
